@@ -4,6 +4,7 @@
 #include "player.h"
 #include "laser.h"
 #include "gSettings.h"
+#include "fcns.h"
 
 //if (!background.loadFromFile("assets/background.png")) std::cout << "Could not load assets/background.png";
 
@@ -28,9 +29,11 @@ int main(int argc, char *argv[])
 	}
 
 	//Generate lasers. The numer of lasers is a command line argument.
-	std::vector<laser> lasers;
+	//std::vector<laser*> lasers; //heap allocation
+	std::vector<laser> lasers; //stack allocation
 	for (int i = 0; i < std::stoi(argv[1]); i++){
-		lasers.push_back(laser());
+		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
+		lasers.push_back(laser(-norm_dist(4.5, 2.))); //stack allocation
 	}
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Dodge Lasers");
@@ -62,6 +65,8 @@ int main(int argc, char *argv[])
 			(*iter).draw(window);
 			(*iter).update(gs->play);
 		}
+
+		check_reached_end(lasers);
 
 		std::cout << "\n";
 

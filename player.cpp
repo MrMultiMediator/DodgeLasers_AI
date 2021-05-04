@@ -31,9 +31,9 @@ void player::update(sf::Texture& play){
 	if (posy < 40.) posy = 40.0;
 	sprite.setPosition(sf::Vector2f(10.0, posy));
 
-	std::cout << posy << "\n";
-	std::cout << vely << "\n";
-	std::cout << NN.output << "\n";
+	//std::cout << posy << "\n";
+	//std::cout << vely << "\n";
+	//std::cout << NN.output << "\n";
 }
 
 void player::draw(sf::RenderWindow & window){
@@ -43,7 +43,7 @@ void player::draw(sf::RenderWindow & window){
 
 
 NeuralNet::NeuralNet(int IDD){
-	std::cout << IDD << "\n";
+	//std::cout << IDD << "\n";
 	srand((unsigned)time( NULL )+IDD); //Use current time as seed for random number generator.
 	output = ((double) rand() / (RAND_MAX));
 }
