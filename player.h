@@ -15,7 +15,7 @@ class player
 {
 
 public:
-	double posy, vely, stime;
+	double posy, vely, stime, left, right, top, bottom;
 	std::string state;
 	NeuralNet NN;
 

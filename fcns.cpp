@@ -2,6 +2,8 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include "fcns.h"
 using namespace std;
 
 double rand_gen() {
@@ -20,4 +22,16 @@ double norm_dist(double mean, double std_dev) {
 	if (x < 0.6) x = mean;
 
 	return x;
+}
+
+bool show_mouse_coords(bool pressed, int mousex, int mousey){
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) pressed = true;
+
+	if (!(sf::Mouse::isButtonPressed(sf::Mouse::Left)) && (pressed)) {
+		std::cout << mousex << ", " << mousey << "\n";
+		pressed = false;
+	}
+
+	return pressed;
 }

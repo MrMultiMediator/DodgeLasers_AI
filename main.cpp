@@ -10,6 +10,7 @@
 
 int main(int argc, char *argv[])
 {
+	bool pressed = false;
 	gSettings *gs = new gSettings(3,"assets/player.png","assets/spear.png");
 
 	double posx = 0.0, posy = 0.0;
@@ -50,6 +51,8 @@ int main(int argc, char *argv[])
 
 		window.clear(sf::Color(25,29,33));
 
+		//std::cout << lasers.size() << "\n";
+
 		//Update background using iterator
 		for (std::vector<background>::iterator iter = bg.begin(); iter != bg.end(); ++iter){
 			(*iter).draw(window);
@@ -66,9 +69,9 @@ int main(int argc, char *argv[])
 			(*iter).update(gs->play);
 		}
 
-		check_reached_end(lasers);
+		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
-		std::cout << "\n";
+		check_reached_end(lasers);
 
 		window.display();
 	}

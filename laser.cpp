@@ -3,10 +3,11 @@
 #include <stdlib.h>
 
 laser::laser(double vel){
+	left=0.0, right=56.0, top=1.0, bottom=5.0;
 	posy = rand() % 475 + 40;
 	posx = 800.1;
 	velx = vel;
-	todestroy = false;
+	todelete = false;
 }
 
 void laser::update(sf::Texture& play){
@@ -14,11 +15,10 @@ void laser::update(sf::Texture& play){
 	posx += velx;
 	sprite.setPosition(sf::Vector2f(posx, posy));
 
-	if (posx < 200){
-		todestroy = true;
+	//If we reach some threshold location (the "end of the screen") set todelete to true
+	if (posx < -46){
+		todelete = true;
 	}
-
-	std::cout << posx << " " << velx << "\n";
 }
 
 void laser::draw(sf::RenderWindow & window){
@@ -26,11 +26,14 @@ void laser::draw(sf::RenderWindow & window){
 }
 
 void check_reached_end(std::vector<laser> &lasers){
-	//See if any laser has reached the end of the screen. Not a class function
-	std::vector<int> todelete; //Specifies which elements to delete
-	int counter = 0;
+	//See if any laser has reached the end of the screen. If yes, delete the laser.
+	//Passing vector by reference to allow manipulation of the laser vector outside
+	//of its original scope (the main function). Not a class function
+
+	std::vector<int> todelete; //Specifies which elements to delete of the lasers vector.
+	int counter = 0; //Enumerates the current element when checking if it's reached the end.
 	for (std::vector<laser>::iterator iter = lasers.begin(); iter != lasers.end(); ++iter){
-		if ((*iter).todestroy == true) todelete.push_back(counter);
+		if ((*iter).todelete == true) todelete.push_back(counter);
 		counter++;
 	}
 
@@ -39,7 +42,6 @@ void check_reached_end(std::vector<laser> &lasers){
 
 	//for (std::vector<laser>::iterator iter = todelete.begin(); iter != todelete.end(); ++iter){
 	for (int i=0; i < todelete.size(); i++){
-		std::cout << todelete[i] << "\n";
 		lasers[todelete[i]] = lasers.back();
 		lasers.pop_back();
 	}

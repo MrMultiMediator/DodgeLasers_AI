@@ -4,9 +4,9 @@
 class laser
 {
 public:
-	double posx, velx;
+	double posx, velx, left, right, top, bottom;
 	int posy;
-	bool todestroy; //If True, the laser has reached the end of the screen and should be destroyed
+	bool todelete; //If True, the laser has reached the end of the screen and should be destroyed
 
 	sf::Sprite sprite;
 
