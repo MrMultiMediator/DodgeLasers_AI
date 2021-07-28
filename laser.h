@@ -1,3 +1,5 @@
+#ifndef LASER_H_
+#define LASER_H_
 #include "iostream"
 #include <SFML/Graphics.hpp>
 
@@ -16,3 +18,5 @@ public:
 };
 
 void check_reached_end(std::vector<laser> &lasers);
+
+#endif

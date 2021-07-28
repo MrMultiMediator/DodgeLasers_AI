@@ -35,3 +35,19 @@ bool show_mouse_coords(bool pressed, int mousex, int mousey){
 
 	return pressed;
 }
+
+bool checkreturn(sf::Event event, bool cr){
+	if (event.type == sf::Event::KeyPressed){
+		if ((event.key.code == sf::Keyboard::RControl) && cr == false){
+			std::cout << "Screen frozen\n";
+			return true;
+		}
+	}
+	if (event.type == sf::Event::KeyPressed){
+		if ((event.key.code == sf::Keyboard::RControl) && cr == true){
+			std::cout << "Screen restored\n";
+			return false;
+		}
+	}
+	return cr;
+}

@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <time.h> //For seeding the random number generator w/ current time
 #include "player.h"
+#include "laser.h"
 //#include <unistd.h>
 
 player::player(int IDD) : NN(IDD){
@@ -13,7 +14,7 @@ player::player(int IDD) : NN(IDD){
 	vely = 0.0;
 	//play.loadFromFile(fname);
 	//sprite.setTexture(play);
-	state = "alive";
+	state = "a"; //a is for alive
 	stime = 0.0;
 	NN = NeuralNet(IDD);
 }
@@ -48,4 +49,22 @@ NeuralNet::NeuralNet(int IDD){
 
 double NeuralNet::activate(double val){
 	return 1./(1.+exp(-val));
+}
+
+void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
+	int count1, count2;
+	count1=0;
+	for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
+		count1++;
+		count2 = 0;
+		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+			count2++;
+			if ((*itlas).posx <= 22 && 10 <= (*itlas).posx + 55 && (*itplay).posy <= (*itlas).posy+4 && (*itlas).posy <= (*itplay).posy + 82){
+				std::cout << "collision\n";
+			}
+
+			//std::cout << (*itplay).posy << " " << (*itlas).posx << " " << (*itlas).posy << "\n";
+			//std::cout << count1 << " " << count2 << "\n";
+		}
+	}
 }

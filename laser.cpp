@@ -1,10 +1,12 @@
 #include "iostream"
 #include "laser.h"
+#include "fcns.h"
 #include <stdlib.h>
 
 laser::laser(double vel){
 	left=0.0, right=56.0, top=1.0, bottom=5.0;
 	posy = rand() % 475 + 40;
+	//posy = rand() % 475 + 75;
 	posx = 800.1;
 	velx = vel;
 	todelete = false;
@@ -26,7 +28,7 @@ void laser::draw(sf::RenderWindow & window){
 }
 
 void check_reached_end(std::vector<laser> &lasers){
-	//See if any laser has reached the end of the screen. If yes, delete the laser.
+	//See if any laser has reached the end of the screen. If yes, delete the laser and create a new one.
 	//Passing vector by reference to allow manipulation of the laser vector outside
 	//of its original scope (the main function). Not a class function
 
@@ -44,5 +46,7 @@ void check_reached_end(std::vector<laser> &lasers){
 	for (int i=0; i < todelete.size(); i++){
 		lasers[todelete[i]] = lasers.back();
 		lasers.pop_back();
+
+		lasers.push_back(laser(-norm_dist(4.5, 2.)));
 	}
 }
