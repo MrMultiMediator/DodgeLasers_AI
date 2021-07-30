@@ -10,8 +10,8 @@ background::background(double x, double y, double vx, const std::string& fname){
 }
 
 void background::update(){
-	posx += velx;
-	if (posx >= 2418.0) posx = -2418.0; //Scroll
+	posx -= velx;
+	if (posx <= -2418.0) posx = 2418.0; //Scroll
 	sprite.setPosition(sf::Vector2f(posx, posy));
 }
 

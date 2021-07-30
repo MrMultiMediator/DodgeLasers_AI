@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 		window.clear(sf::Color(25,29,33));
 
-		//Screen is active
+		//Screen is active (ctrl key)
 		if (cr == false){
 			//Update background using iterator
 			for (std::vector<background>::iterator iter = bg.begin(); iter != bg.end(); ++iter){
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 				(*iter).draw(window);
 				(*iter).update(gs->play);
 			}
-		//Screen is frozen
+		//Screen is frozen (ctrl key)
 		} else {
 			//Update background using iterator
 			for (std::vector<background>::iterator iter = bg.begin(); iter != bg.end(); ++iter) (*iter).draw(window);
