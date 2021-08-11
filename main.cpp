@@ -25,18 +25,18 @@ int main(int argc, char *argv[])
 	bg.push_back(*bg1);
 	bg.push_back(*bg2);
 
-	//Generate players
-	std::vector<player> players;
-	for (int i = 0; i < gs->nplayers; i++){
-		players.push_back(player(i));
-	}
-
 	//Generate lasers. The numer of lasers is a command line argument.
 	//std::vector<laser*> lasers; //heap allocation
 	std::vector<laser> lasers; //stack allocation
 	for (int i = 0; i < std::stoi(argv[1]); i++){
 		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
 		lasers.push_back(laser(-norm_dist(4.5, 2.))); //stack allocation
+	}
+
+	//Generate players
+	std::vector<player> players;
+	for (int i = 0; i < gs->nplayers; i++){
+		players.push_back(player(i, std::stoi(argv[1])));
 	}
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Dodge Lasers");
@@ -55,6 +55,8 @@ int main(int argc, char *argv[])
 
 		window.clear(sf::Color(25,29,33));
 
+		//std::cout << lasers.size() << "\n";
+
 		//Screen is active (ctrl key)
 		if (cr == false){
 			//Update background using iterator
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
 			for (std::vector<player>::iterator iter = players.begin(); iter != players.end(); ++iter){
 				(*iter).draw(window);
 				(*iter).update(gs->play);
+				(*iter).reload_inputs(lasers);
 			}
 		//Screen is frozen (ctrl key)
 		} else {

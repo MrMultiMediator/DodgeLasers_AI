@@ -44,9 +44,9 @@ void check_reached_end(std::vector<laser> &lasers){
 
 	//for (std::vector<laser>::iterator iter = todelete.begin(); iter != todelete.end(); ++iter){
 	for (int i=0; i < todelete.size(); i++){
-		lasers[todelete[i]] = lasers.back();
-		lasers.pop_back();
+		lasers[todelete[i]] = lasers.back(); //Move expired laser to the back of the array?
+		lasers.pop_back();	//Delete the laser that is in the back of the array
 
-		lasers.push_back(laser(-norm_dist(4.5, 2.)));
+		lasers.push_back(laser(-norm_dist(4.5, 2.))); //Add new laser to the back of the array, sampling the velocity distribution
 	}
 }

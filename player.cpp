@@ -7,7 +7,7 @@
 #include "laser.h"
 //#include <unistd.h>
 
-player::player(int IDD) : NN(IDD){
+player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 	left=2.0, right=15.0, top=2.0, bottom=83.0;
 	stime = 0;
 	posy = 600./2.;
@@ -16,7 +16,7 @@ player::player(int IDD) : NN(IDD){
 	//sprite.setTexture(play);
 	state = "a"; //a is for alive
 	stime = 0.0;
-	NN = NeuralNet(IDD);
+	NN = NeuralNet(IDD, nlasers);
 }
 
 //Need to pass in texture by reference to avoid white square problem. This is because passing by reference only passes
@@ -40,15 +40,44 @@ void player::draw(sf::RenderWindow & window){
 	window.draw(sprite);
 }
 
+void player::reload_inputs(std::vector<laser> &lasers){
+	NN.reload_inputs(vely, posy, lasers);
+}
 
 
-NeuralNet::NeuralNet(int IDD){
+
+NeuralNet::NeuralNet(int IDD, int nlasers){
 	srand((unsigned)time( NULL )+IDD); //Use current time as seed for random number generator.
 	output = ((double) rand() / (RAND_MAX));
+
+	inputs.push_back(0.0); //Player velcocity
+
+	for (int i = 0; i < nlasers; i++){
+		inputs.push_back(0.0); //Delta_y: Difference between player y and laser y
+		inputs.push_back(0.0); //Delta_x: Laser x position relative to player surface (where collisions start)
+		inputs.push_back(0.0); //Laser x velocities
+	}
 }
 
 double NeuralNet::activate(double val){
 	return 1./(1.+exp(-val));
+}
+
+void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lasers){
+	int j = 1;
+	inputs[0] = vely;
+
+	for (int i = 0; i < lasers.size(); i++){
+		inputs[j] = posy - lasers[i].posy; // Delta_y: Difference between player y and laser y
+		inputs[j+1] = lasers[i].posx - 25; // Delta_x: Laser x position relative to player surface (where collisions start)
+		inputs[j+2] = lasers[i].velx; // Laser x velocities
+		j += 3;
+	}
+
+	for (int i = 0; i < inputs.size(); i++){
+		std::cout << inputs[i] <<"\n";
+	}
+	std::cout << "\n";
 }
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
@@ -60,7 +89,7 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 			count2++;
 			if ((*itlas).posx <= 22 && 10 <= (*itlas).posx + 55 && (*itplay).posy <= (*itlas).posy+4 && (*itlas).posy <= (*itplay).posy + 82){
-				std::cout << "collision\n";
+				//std::cout << "collision\n";
 			}
 
 			//std::cout << (*itplay).posy << " " << (*itlas).posx << " " << (*itlas).posy << "\n";
