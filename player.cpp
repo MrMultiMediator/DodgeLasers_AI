@@ -65,12 +65,16 @@ double NeuralNet::activate(double val){
 
 void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lasers){
 	int j = 1;
-	inputs[0] = vely;
+	double mean_las_vel = -4.5;
+	double std_las_vel = 2.0;
+	inputs[0] = vely/30.;
+	//std::cout << inputs[0] << "\n";
+	//x = 798 -> 25, y = 46 -> 556
 
 	for (int i = 0; i < lasers.size(); i++){
-		inputs[j] = posy - lasers[i].posy; // Delta_y: Difference between player y and laser y
-		inputs[j+1] = lasers[i].posx - 25; // Delta_x: Laser x position relative to player surface (where collisions start)
-		inputs[j+2] = lasers[i].velx; // Laser x velocities
+		inputs[j] = (posy - lasers[i].posy + 39)/510.; // Delta_y: Difference between player y and laser y shifted by 39 so that the zero point is when the laser is right in the middle of the player. Normalized by playable game width
+		inputs[j+1] = (lasers[i].posx - 25)/773.; // Delta_x: Laser x position relative to player surface (where collisions start)
+		inputs[j+2] = (lasers[i].velx - mean_las_vel)/std_las_vel; // Laser x velocities. Shifted by mean velocity and normalized by standard deviation.
 		j += 3;
 	}
 
