@@ -10,8 +10,9 @@
 player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 	left=2.0, right=15.0, top=2.0, bottom=83.0;
 	stime = 0;
-	posy = 600./2.;
-	vely = 0.0;
+	posy = 250.;
+	dvely = 0.3; //Change in velocity due to acceleration
+	vely = 0.5*dvely;
 	//play.loadFromFile(fname);
 	//sprite.setTexture(play);
 	state = "a"; //a is for alive
@@ -26,14 +27,13 @@ player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 void player::update(sf::Texture& play){
 	//Gravitational acceleration
 	sprite.setTexture(play);
-	vely += 0.3;
-	if (NN.output > 0.5) vely -= 0.6;
+	vely += dvely;
+	if (NN.output > 0.5) vely -= 2.0*dvely;
+
 	posy += vely;
 	if (posy > 475.) posy = 475.0;
 	if (posy < 40.) posy = 40.0;
 	sprite.setPosition(sf::Vector2f(10.0, posy));
-
-	//std::cout << NN.output << "\n";
 }
 
 void player::draw(sf::RenderWindow & window){
@@ -44,6 +44,9 @@ void player::reload_inputs(std::vector<laser> &lasers){
 	NN.reload_inputs(vely, posy, lasers);
 }
 
+void player::propagate(){
+	NN.propagate();
+}
 
 
 NeuralNet::NeuralNet(int IDD, int nlasers){
@@ -51,11 +54,19 @@ NeuralNet::NeuralNet(int IDD, int nlasers){
 	output = ((double) rand() / (RAND_MAX));
 
 	inputs.push_back(0.0); //Player velcocity
+	weights.push_back(0.01); //Weight for player velocity
+	biases.push_back(0.0); //Bias for player velocity
 
 	for (int i = 0; i < nlasers; i++){
 		inputs.push_back(0.0); //Delta_y: Difference between player y and laser y
+		weights.push_back(0.0);
+		biases.push_back(0.0);
 		inputs.push_back(0.0); //Delta_x: Laser x position relative to player surface (where collisions start)
+		weights.push_back(0.0);
+		biases.push_back(0.0);
 		inputs.push_back(0.0); //Laser x velocities
+		weights.push_back(0.0);
+		biases.push_back(0.0);
 	}
 }
 
@@ -68,7 +79,7 @@ void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lase
 	double mean_las_vel = -4.5;
 	double std_las_vel = 2.0;
 	inputs[0] = vely/30.;
-	//std::cout << inputs[0] << "\n";
+	//std::cout << output << "\n";
 	//x = 798 -> 25, y = 46 -> 556
 
 	for (int i = 0; i < lasers.size(); i++){
@@ -78,10 +89,19 @@ void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lase
 		j += 3;
 	}
 
+	//for (int i = 0; i < inputs.size(); i++){
+	//	std::cout << inputs[i] <<"\n";
+	//}
+	//std::cout << "\n";
+}
+
+void NeuralNet::propagate(){
+	double temp = 0.0;
 	for (int i = 0; i < inputs.size(); i++){
-		std::cout << inputs[i] <<"\n";
+		temp += weights[i]*inputs[i];
+		temp += biases[i];
 	}
-	std::cout << "\n";
+	output = activate(temp);
 }
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){

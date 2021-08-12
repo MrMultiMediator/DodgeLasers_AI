@@ -7,19 +7,20 @@
 class NeuralNet
 {
 public:
-	std::vector<double> inputs;
+	std::vector<double> inputs, weights, biases;
 	double output;
 
 	NeuralNet(int, int);
 	double activate(double val);
 	void reload_inputs(double vely, double posy, std::vector<laser> &lasers);
+	void propagate(); // Forward propagation to get output value
 };
 
 class player
 {
 
 public:
-	double posy, vely, stime, left, right, top, bottom;
+	double posy, vely, dvely, stime, left, right, top, bottom;
 	std::string state;
 	NeuralNet NN; //player has a neural net
 
@@ -30,6 +31,7 @@ public:
 	void update(sf::Texture&); //Need to pass in texture by reference to avoid white square problem
 	void draw(sf::RenderWindow & window);
 	void reload_inputs(std::vector<laser> &lasers); //Reload the input neurons with data
+	void propagate(); // Forward propagation to get output value
 };
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players);

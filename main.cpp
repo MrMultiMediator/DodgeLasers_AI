@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 				(*iter).draw(window);
 				(*iter).update(gs->play);
 				(*iter).reload_inputs(lasers);
+				(*iter).propagate();
 			}
 		//Screen is frozen (ctrl key)
 		} else {
