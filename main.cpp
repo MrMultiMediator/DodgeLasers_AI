@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <time.h>
 #include "iostream"
 #include <SFML/Graphics.hpp>
 #include "background.h"
@@ -11,9 +13,10 @@
 
 int main(int argc, char *argv[])
 {
+	srand(time(0));
 	bool pressed = false;
 	bool cr = false;
-	gSettings *gs = new gSettings(3,"assets/player.png","assets/spear.png");
+	gSettings *gs = new gSettings(30,"assets/player.png","assets/spear.png");
 
 	double posx = 0.0, posy = 0.0;
 
@@ -55,8 +58,6 @@ int main(int argc, char *argv[])
 
 		window.clear(sf::Color(25,29,33));
 
-		//std::cout << lasers.size() << "\n";
-
 		//Screen is active (ctrl key)
 		if (cr == false){
 			//Update background using iterator
@@ -71,10 +72,10 @@ int main(int argc, char *argv[])
 			}
 			//Update players using iterator
 			for (std::vector<player>::iterator iter = players.begin(); iter != players.end(); ++iter){
-				(*iter).draw(window);
 				(*iter).update(gs->play);
 				(*iter).reload_inputs(lasers);
 				(*iter).propagate();
+				(*iter).draw(window);
 			}
 		//Screen is frozen (ctrl key)
 		} else {

@@ -1,6 +1,8 @@
-#include <cstdlib>
+//#include <cstdlib>
+//#include <ctime>
+#include <stdlib.h>
+#include <time.h>
 #include <cmath>
-#include <ctime>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "fcns.h"

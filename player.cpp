@@ -5,13 +5,14 @@
 #include <time.h> //For seeding the random number generator w/ current time
 #include "player.h"
 #include "laser.h"
+#include "fcns.h"
 //#include <unistd.h>
 
 player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 	left=2.0, right=15.0, top=2.0, bottom=83.0;
 	stime = 0;
 	posy = 250.;
-	dvely = 0.3; //Change in velocity due to acceleration
+	dvely = 0.2; //Change in velocity due to acceleration
 	vely = 0.5*dvely;
 	//play.loadFromFile(fname);
 	//sprite.setTexture(play);
@@ -20,10 +21,10 @@ player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 	NN = NeuralNet(IDD, nlasers);
 }
 
-//Need to pass in texture by reference to avoid white square problem. This is because passing by reference only passes
-//in a copy which is destroyed when the function ends. The texture needs to persist, so I need to pass it be reference.
-//According to the docs, "the texture must exist as long as the sprite uses it". And the sprite needs to use it, even
-//when it leaves this function, and moves on to the "draw" function
+/* Need to pass in texture by reference to avoid white square problem. This is because passing by value only passes
+in a copy which is destroyed when the function ends. The texture needs to persist, so I need to pass it by reference.
+According to the docs, "the texture must exist as long as the sprite uses it". And the sprite needs to use it, even
+when it leaves this function, and moves on to the "draw" function */
 void player::update(sf::Texture& play){
 	//Gravitational acceleration
 	sprite.setTexture(play);
@@ -31,13 +32,27 @@ void player::update(sf::Texture& play){
 	if (NN.output > 0.5) vely -= 2.0*dvely;
 
 	posy += vely;
-	if (posy > 475.) posy = 475.0;
-	if (posy < 40.) posy = 40.0;
+	if (state == "a") stime++;
+
+	// Boundaries
+	if (state == "a"){
+		if (posy > 475.){
+			posy = 475.0;
+			state = "d"; // Dead
+			std::cout << stime << "\n";
+		}
+		if (posy < 40.){
+			posy = 40.0;
+			state = "d"; // Dead
+			std::cout << stime << "\n";
+		}
+	}
 	sprite.setPosition(sf::Vector2f(10.0, posy));
 }
 
 void player::draw(sf::RenderWindow & window){
-	window.draw(sprite);
+	if (state == "a") window.draw(sprite);
+	//window.draw(sprite);
 }
 
 void player::reload_inputs(std::vector<laser> &lasers){
@@ -59,14 +74,14 @@ NeuralNet::NeuralNet(int IDD, int nlasers){
 
 	for (int i = 0; i < nlasers; i++){
 		inputs.push_back(0.0); //Delta_y: Difference between player y and laser y
-		weights.push_back(0.0);
-		biases.push_back(0.0);
+		weights.push_back(2.*rand_gen()-1.);
+		biases.push_back(2.*rand_gen()-1.);
 		inputs.push_back(0.0); //Delta_x: Laser x position relative to player surface (where collisions start)
-		weights.push_back(0.0);
-		biases.push_back(0.0);
+		weights.push_back(2.*rand_gen()-1.);
+		biases.push_back(2.*rand_gen()-1.);
 		inputs.push_back(0.0); //Laser x velocities
-		weights.push_back(0.0);
-		biases.push_back(0.0);
+		weights.push_back(2.*rand_gen()-1.);
+		biases.push_back(2.*rand_gen()-1.);
 	}
 }
 
@@ -88,11 +103,6 @@ void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lase
 		inputs[j+2] = (lasers[i].velx - mean_las_vel)/std_las_vel; // Laser x velocities. Shifted by mean velocity and normalized by standard deviation.
 		j += 3;
 	}
-
-	//for (int i = 0; i < inputs.size(); i++){
-	//	std::cout << inputs[i] <<"\n";
-	//}
-	//std::cout << "\n";
 }
 
 void NeuralNet::propagate(){
@@ -112,10 +122,13 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 		count2 = 0;
 		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 			count2++;
-			if ((*itlas).posx <= 22 && 10 <= (*itlas).posx + 55 && (*itplay).posy <= (*itlas).posy+4 && (*itlas).posy <= (*itplay).posy + 82){
-				//std::cout << "collision\n";
+			if ((*itplay).state == "a"){
+				if ((*itlas).posx <= 22 && 10 <= (*itlas).posx + 55 && (*itplay).posy <= (*itlas).posy+4 && (*itlas).posy <= (*itplay).posy + 82){
+					//std::cout << "collision\n";
+					(*itplay).state = "d";
+					std::cout << (*itplay).stime << "\n";
+				}
 			}
-
 			//std::cout << (*itplay).posy << " " << (*itlas).posx << " " << (*itlas).posy << "\n";
 			//std::cout << count1 << " " << count2 << "\n";
 		}
