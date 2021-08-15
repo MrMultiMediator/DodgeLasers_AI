@@ -27,7 +27,7 @@ void laser::draw(sf::RenderWindow & window){
 	window.draw(sprite);
 }
 
-void check_reached_end(std::vector<laser> &lasers){
+void check_reached_end(std::vector<laser> &lasers, int &lasers_ever ){
 	//See if any laser has reached the end of the screen. If yes, delete the laser and create a new one.
 	//Passing vector by reference to allow manipulation of the laser vector outside
 	//of its original scope (the main function). Not a class function
@@ -48,5 +48,6 @@ void check_reached_end(std::vector<laser> &lasers){
 		lasers.pop_back();	//Delete the laser that is in the back of the array
 
 		lasers.push_back(laser(-norm_dist(4.5, 2.))); //Add new laser to the back of the array, sampling the velocity distribution
+		lasers_ever++;
 	}
 }

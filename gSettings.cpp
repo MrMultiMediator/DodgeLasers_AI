@@ -5,4 +5,5 @@ gSettings::gSettings(int i, const std::string& fname, const std::string& lname){
 	play.loadFromFile(fname);
 	lasertexture.loadFromFile(lname);
 	nplayers = i;
+	lasers_ever = 0;
 }

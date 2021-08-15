@@ -17,6 +17,6 @@ public:
 	void draw(sf::RenderWindow & window);
 };
 
-void check_reached_end(std::vector<laser> &lasers);
+void check_reached_end(std::vector<laser> &lasers, int &lasers_ever);
 
 #endif

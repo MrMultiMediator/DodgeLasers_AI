@@ -32,10 +32,10 @@ void player::update(sf::Texture& play){
 	if (NN.output > 0.5) vely -= 2.0*dvely;
 
 	posy += vely;
-	if (state == "a") stime++;
 
 	// Boundaries
 	if (state == "a"){
+		stime++; //Increment the survival time
 		if (posy > 475.){
 			posy = 475.0;
 			state = "d"; // Dead
