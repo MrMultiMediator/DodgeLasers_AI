@@ -17,8 +17,20 @@ player::player(int IDD, int nlasers) : NN(IDD, nlasers){
 	//play.loadFromFile(fname);
 	//sprite.setTexture(play);
 	state = "a"; //a is for alive
-	stime = 0.0;
 	NN = NeuralNet(IDD, nlasers);
+}
+
+void player::revive(){
+	state = "a";
+	posy = 250.;
+	vely = 0.5*dvely;
+	st_arr.push_back(stime);
+	stime = 0.;
+
+	for (int i = 0; i < st_arr.size(); i++){
+		std::cout << st_arr[i] << " ";
+	}
+	std::cout << "\n";
 }
 
 /* Need to pass in texture by reference to avoid white square problem. This is because passing by value only passes
@@ -39,12 +51,10 @@ void player::update(sf::Texture& play){
 		if (posy > 475.){
 			posy = 475.0;
 			state = "d"; // Dead
-			std::cout << stime << "\n";
 		}
 		if (posy < 40.){
 			posy = 40.0;
 			state = "d"; // Dead
-			std::cout << stime << "\n";
 		}
 	}
 	sprite.setPosition(sf::Vector2f(10.0, posy));
@@ -124,13 +134,32 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 			count2++;
 			if ((*itplay).state == "a"){
 				if ((*itlas).posx <= 22 && 10 <= (*itlas).posx + 55 && (*itplay).posy <= (*itlas).posy+4 && (*itlas).posy <= (*itplay).posy + 82){
-					//std::cout << "collision\n";
 					(*itplay).state = "d";
-					std::cout << (*itplay).stime << "\n";
 				}
 			}
 			//std::cout << (*itplay).posy << " " << (*itlas).posx << " " << (*itlas).posy << "\n";
 			//std::cout << count1 << " " << count2 << "\n";
+		}
+	}
+}
+
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever){
+
+	// If any players are still alive, exit the function immediately
+	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+		if ((*itplay).state == "a") return;
+	}
+
+	// All players are dead
+	if (lasers_ever >= sample_limit){
+
+	// If the sample limit hasn't been reached, revive all players
+	} else {
+		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+			(*itplay).revive();
+		}
+		for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
+			(*itlas).todelete = true;
 		}
 	}
 }

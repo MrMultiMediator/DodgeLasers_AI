@@ -21,13 +21,15 @@ class player
 
 public:
 	double posy, vely, dvely, stime, left, right, top, bottom;
+	std::vector<double> st_arr; //Survival time array
 	std::string state;
 	NeuralNet NN; //player has a neural net
 
 	//sf::Texture play;
 	sf::Sprite sprite;
 
-	player(int IDD, int nlasers); 
+	player(int IDD, int nlasers);
+	void revive();
 	void update(sf::Texture&); //Need to pass in texture by reference to avoid white square problem
 	void draw(sf::RenderWindow & window);
 	void reload_inputs(std::vector<laser> &lasers); //Reload the input neurons with data
@@ -35,5 +37,6 @@ public:
 };
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players);
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever);
 
 #endif

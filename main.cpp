@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	srand(time(0));
 	bool pressed = false;
 	bool cr = false;
-	gSettings *gs = new gSettings(30,"assets/player.png","assets/spear.png");
+	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png");
 
 	double posx = 0.0, posy = 0.0;
 
@@ -92,7 +92,8 @@ int main(int argc, char *argv[])
 
 		check_reached_end(lasers, gs->lasers_ever); //If any lasers have reached the end of the screen, delete them
 		collision_detect(lasers, players); //Detect collisions between lasers and players
-		std::cout << gs->lasers_ever << "\n";
+		check_restart(players, lasers, gs->sampleLimit, gs->lasers_ever);
+		//std::cout << gs->lasers_ever << "\n";
 		
 		window.display();
 	}
