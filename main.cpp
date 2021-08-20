@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 	bool pressed = false;
 	bool cr = false;
 	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png");
+	generation *gen = new generation(gen_random(12));
 
 	double posx = 0.0, posy = 0.0;
 

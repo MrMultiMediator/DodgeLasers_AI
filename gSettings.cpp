@@ -8,3 +8,10 @@ gSettings::gSettings(int i, int sL, const std::string& fname, const std::string&
 	nplayers = i;
 	lasers_ever = 0;
 }
+
+generation::generation(std::string nombre){
+	N_lasers = 0;
+	N_death_cycles = 0;
+	name = nombre;
+	std::cout << "New generation " << name << "\n";
+}
