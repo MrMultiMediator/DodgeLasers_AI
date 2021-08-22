@@ -1,3 +1,4 @@
+#pragma once
 #include "iostream"
 #include <SFML/Graphics.hpp>
 class gSettings
@@ -17,6 +18,6 @@ class generation
 public:
 	int N_lasers, N_death_cycles;
 	std::vector<double> laser_x_vels;
-	std::string name, best_player;
-	generation(std::string);
+	std::string name, best_player, parent_gen;
+	generation(std::string, std::string);
 };

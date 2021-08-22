@@ -16,8 +16,9 @@ int main(int argc, char *argv[])
 	srand(time(0));
 	bool pressed = false;
 	bool cr = false;
-	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png");
-	generation *gen = new generation(gen_random(12));
+	std::string parent(argv[2]);
+	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png"); // Game settings object
+	generation *gen = new generation(gen_random(12), parent); // New generation object. Parent generation name is a command line object.
 
 	double posx = 0.0, posy = 0.0;
 
@@ -30,11 +31,10 @@ int main(int argc, char *argv[])
 	bg.push_back(*bg2);
 
 	//Generate lasers. The numer of lasers is a command line argument.
-	//std::vector<laser*> lasers; //heap allocation
 	std::vector<laser> lasers; //stack allocation
 	for (int i = 0; i < std::stoi(argv[1]); i++){
 		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
-		lasers.push_back(laser(-norm_dist(4.5, 2.))); //stack allocation
+		lasers.push_back(laser(-norm_dist(4.5, 2.), gen->laser_x_vels)); //stack allocation
 		gen->N_lasers++;
 	}
 
@@ -91,9 +91,9 @@ int main(int argc, char *argv[])
 
 		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
-		check_reached_end(lasers, gen->N_lasers); //If any lasers have reached the end of the screen, delete them
+		check_reached_end(lasers, gen->N_lasers, gen->laser_x_vels); //If any lasers have reached the end of the screen, delete them
 		collision_detect(lasers, players); //Detect collisions between lasers and players
-		check_restart(players, lasers, gs->sampleLimit, gen->N_lasers, gen->N_death_cycles);
+		check_restart(players, lasers, gs->sampleLimit, gen);
 		//std::cout << gen->N_lasers << "\n";
 		
 		window.display();

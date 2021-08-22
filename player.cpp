@@ -6,6 +6,7 @@
 #include "player.h"
 #include "laser.h"
 #include "fcns.h"
+#include "file_io.h"
 //#include <unistd.h>
 
 player::player(int IDD, int nlasers) : NN(IDD, nlasers){
@@ -143,7 +144,8 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 	}
 }
 
-void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever, int &N_death_cycles){
+//void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever, int &N_death_cycles, std::vector<double> laser_x_vels){
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, generation *gen){
 
 	// If any players are still alive, exit the function immediately
 	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
@@ -151,9 +153,9 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 	}
 
 	// All players are dead
-	if (lasers_ever >= sample_limit){
+	if (gen->N_lasers >= sample_limit){
 
-	// If the sample limit hasn't been reached, revive all players
+	// If the sample limit hasn't been reached, revive all players. Write a temporary data file as well.
 	} else {
 		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 			(*itplay).revive();
@@ -161,7 +163,8 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 		for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
 			(*itlas).todelete = true;
 		}
-		N_death_cycles++;
-		std::cout << "N_death_cycles = " << N_death_cycles << "\n";
+		write_temp_data(gen, players);
+		gen->N_death_cycles++;
+		std::cout << "N_death_cycles = " << gen->N_death_cycles << "\n";
 	}
 }

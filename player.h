@@ -2,6 +2,7 @@
 #define PLAYER_H_
 #include "iostream"
 #include "laser.h"
+#include "gSettings.h"
 #include <SFML/Graphics.hpp>
 
 class NeuralNet
@@ -37,6 +38,6 @@ public:
 };
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players);
-void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever, int &N_death_cycles);
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, generation *gen);
 
 #endif

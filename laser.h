@@ -12,11 +12,11 @@ public:
 
 	sf::Sprite sprite;
 
-	laser(double);
+	laser(double vel, std::vector<double> &laser_x_vels);
 	void update(sf::Texture&); //Need to pass in texture by reference to avoid white square problem
 	void draw(sf::RenderWindow & window);
 };
 
-void check_reached_end(std::vector<laser> &lasers, int &lasers_ever);
+void check_reached_end(std::vector<laser> &lasers, int &lasers_ever, std::vector<double> &laser_x_vels);
 
 #endif

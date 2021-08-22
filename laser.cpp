@@ -3,13 +3,14 @@
 #include "fcns.h"
 #include <stdlib.h>
 
-laser::laser(double vel){
+laser::laser(double vel, std::vector<double> &laser_x_vels){
 	left=0.0, right=56.0, top=1.0, bottom=5.0;
 	posy = rand() % 475 + 40;
 	//posy = rand() % 475 + 75;
 	posx = 800.1;
 	velx = vel;
 	todelete = false;
+	laser_x_vels.push_back(vel);
 }
 
 void laser::update(sf::Texture& play){
@@ -27,7 +28,7 @@ void laser::draw(sf::RenderWindow & window){
 	window.draw(sprite);
 }
 
-void check_reached_end(std::vector<laser> &lasers, int &lasers_ever ){
+void check_reached_end(std::vector<laser> &lasers, int &lasers_ever, std::vector<double> &laser_x_vels){
 	//See if any laser has reached the end of the screen. If yes, delete the laser and create a new one.
 	//Passing vector by reference to allow manipulation of the laser vector outside
 	//of its original scope (the main function). Not a class function
@@ -47,7 +48,7 @@ void check_reached_end(std::vector<laser> &lasers, int &lasers_ever ){
 		lasers[todelete[i]] = lasers.back(); //Move expired laser to the back of the array?
 		lasers.pop_back();	//Delete the laser that is in the back of the array
 
-		lasers.push_back(laser(-norm_dist(4.5, 2.))); //Add new laser to the back of the array, sampling the velocity distribution
+		lasers.push_back(laser(-norm_dist(4.5, 2.), laser_x_vels)); //Add new laser to the back of the array, sampling the velocity distribution
 		lasers_ever++;
 	}
 }
