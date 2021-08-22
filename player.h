@@ -8,8 +8,8 @@
 class NeuralNet
 {
 public:
-	std::vector<double> inputs, weights, biases;
-	double output;
+	std::vector<double> inputs, weights;
+	double bias, output;
 
 	NeuralNet(int, int);
 	double activate(double val);

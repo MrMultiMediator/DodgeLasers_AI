@@ -81,18 +81,15 @@ NeuralNet::NeuralNet(int IDD, int nlasers){
 
 	inputs.push_back(0.0); //Player velcocity
 	weights.push_back(0.01); //Weight for player velocity
-	biases.push_back(0.0); //Bias for player velocity
+	bias = 0.0; //Bias for player velocity
 
 	for (int i = 0; i < nlasers; i++){
 		inputs.push_back(0.0); //Delta_y: Difference between player y and laser y
 		weights.push_back(2.*rand_gen()-1.);
-		biases.push_back(2.*rand_gen()-1.);
 		inputs.push_back(0.0); //Delta_x: Laser x position relative to player surface (where collisions start)
 		weights.push_back(2.*rand_gen()-1.);
-		biases.push_back(2.*rand_gen()-1.);
 		inputs.push_back(0.0); //Laser x velocities
 		weights.push_back(2.*rand_gen()-1.);
-		biases.push_back(2.*rand_gen()-1.);
 	}
 }
 
@@ -120,8 +117,8 @@ void NeuralNet::propagate(){
 	double temp = 0.0;
 	for (int i = 0; i < inputs.size(); i++){
 		temp += weights[i]*inputs[i];
-		temp += biases[i];
 	}
+	temp += bias;
 	output = activate(temp);
 }
 
