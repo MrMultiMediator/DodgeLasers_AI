@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < std::stoi(argv[1]); i++){
 		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
 		lasers.push_back(laser(-norm_dist(4.5, 2.))); //stack allocation
-		gs->lasers_ever++;
+		gen->N_lasers++;
 	}
 
 	//Generate players
@@ -91,10 +91,10 @@ int main(int argc, char *argv[])
 
 		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
-		check_reached_end(lasers, gs->lasers_ever); //If any lasers have reached the end of the screen, delete them
+		check_reached_end(lasers, gen->N_lasers); //If any lasers have reached the end of the screen, delete them
 		collision_detect(lasers, players); //Detect collisions between lasers and players
-		check_restart(players, lasers, gs->sampleLimit, gs->lasers_ever);
-		//std::cout << gs->lasers_ever << "\n";
+		check_restart(players, lasers, gs->sampleLimit, gen->N_lasers, gen->N_death_cycles);
+		//std::cout << gen->N_lasers << "\n";
 		
 		window.display();
 	}

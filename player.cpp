@@ -143,7 +143,7 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 	}
 }
 
-void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever){
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever, int &N_death_cycles){
 
 	// If any players are still alive, exit the function immediately
 	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
@@ -161,5 +161,7 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 		for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
 			(*itlas).todelete = true;
 		}
+		N_death_cycles++;
+		std::cout << "N_death_cycles = " << N_death_cycles << "\n";
 	}
 }

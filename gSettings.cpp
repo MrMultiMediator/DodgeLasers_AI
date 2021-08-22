@@ -6,7 +6,6 @@ gSettings::gSettings(int i, int sL, const std::string& fname, const std::string&
 	play.loadFromFile(fname);
 	lasertexture.loadFromFile(lname);
 	nplayers = i;
-	lasers_ever = 0;
 }
 
 generation::generation(std::string nombre){
