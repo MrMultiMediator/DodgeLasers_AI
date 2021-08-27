@@ -1,6 +1,7 @@
 #include "iostream"
 #include "laser.h"
 #include "fcns.h"
+#include "file_io.h"
 #include <stdlib.h>
 
 laser::laser(double vel, std::vector<double> &laser_x_vels){

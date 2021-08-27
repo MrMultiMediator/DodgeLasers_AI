@@ -2,12 +2,13 @@
 #include "fstream"
 #include "player.h"
 #include "gSettings.h"
+#include <sstream>
 
 //void write_temp_data(int N_lasers, std::vector<double> laser_x_vels, std::vector<player> players)
 void write_temp_data(generation *gen, std::vector<player> players){
 	std::ofstream temp_file;
-	temp_file.open("temp_data.txt");
-	temp_file << "Name: " << gen->name << "\nParent_gen: " << gen->parent_gen << "\nN_lasers: " << gen->N_lasers << "\n" << "laser_x_vels: ";
+	temp_file.open("data/temp_data.txt");
+	temp_file << "Name: " << gen->name << "\nParent_gen: " << gen->parent_gen << "\nN_lasers: " << gen->N_lasers << "\nN_death_cycles: " << gen->N_death_cycles << "\nlaser_x_vels: ";
 
 	// Write laser x velocities to the file
 	for (int i = 0; i < gen->laser_x_vels.size(); i++){
@@ -32,4 +33,12 @@ void write_temp_data(generation *gen, std::vector<player> players){
 	}
 
 	temp_file.close();
+}
+
+void split2(const std::string& str, std::vector<std::string>& cont, char delim = ' '){
+	std::stringstream ss(str);
+	std::string token;
+	while (std::getline(ss, token, delim)){
+		cont.push_back(token);
+	}
 }

@@ -16,9 +16,10 @@ int main(int argc, char *argv[])
 	srand(time(0));
 	bool pressed = false;
 	bool cr = false;
-	std::string parent(argv[2]);
+	std::string directive(argv[2]); // File to read in current generation from. If it says "None", start new generation
+
 	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png"); // Game settings object
-	generation *gen = new generation(gen_random(12), parent); // New generation object. Parent generation name is a command line object.
+	generation *gen = new generation(gen_random(12), "None"); // New generation object. Parent generation name is a command line object.
 
 	double posx = 0.0, posy = 0.0;
 
@@ -29,6 +30,8 @@ int main(int argc, char *argv[])
 	//bg.push_back(background(-2418.0, 0.0, 7.0, "assets/background.png"));
 	bg.push_back(*bg1);
 	bg.push_back(*bg2);
+
+	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 
 	//Generate lasers. The numer of lasers is a command line argument.
 	std::vector<laser> lasers; //stack allocation
@@ -91,19 +94,13 @@ int main(int argc, char *argv[])
 
 		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
+		//std::cout << "N_lasers = " << gen->N_lasers << "\n";
 		check_reached_end(lasers, gen->N_lasers, gen->laser_x_vels); //If any lasers have reached the end of the screen, delete them
 		collision_detect(lasers, players); //Detect collisions between lasers and players
 		check_restart(players, lasers, gs->sampleLimit, gen);
-		//std::cout << gen->N_lasers << "\n";
 		
 		window.display();
 	}
 
 	return 0;
 }
-
-//Old update background code
-//bg[0].draw(window);
-//bg[1].draw(window);
-//bg[0].update();
-//bg[1].update();

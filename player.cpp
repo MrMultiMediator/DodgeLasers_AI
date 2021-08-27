@@ -160,8 +160,9 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 		for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
 			(*itlas).todelete = true;
 		}
-		write_temp_data(gen, players);
 		gen->N_death_cycles++;
+		write_temp_data(gen, players);
 		std::cout << "N_death_cycles = " << gen->N_death_cycles << "\n";
+		//std::cout << "N_lasers = " << gen->N_lasers << "\n";
 	}
 }

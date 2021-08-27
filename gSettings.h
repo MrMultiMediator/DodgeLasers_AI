@@ -1,6 +1,7 @@
 #pragma once
 #include "iostream"
 #include <SFML/Graphics.hpp>
+
 class gSettings
 {
 
@@ -20,4 +21,5 @@ public:
 	std::vector<double> laser_x_vels;
 	std::string name, best_player, parent_gen;
 	generation(std::string, std::string);
+	void reload(std::string filename);
 };
