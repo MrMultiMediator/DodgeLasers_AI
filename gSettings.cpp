@@ -3,11 +3,12 @@
 #include "fstream"
 #include "gSettings.h"
 
-gSettings::gSettings(int i, int sL, const std::string& fname, const std::string& lname){
+gSettings::gSettings(int i, int sL, const std::string& fname, const std::string& lname, double std_s){
 	sampleLimit = sL;
 	play.loadFromFile(fname);
 	lasertexture.loadFromFile(lname);
 	nplayers = i;
+	std_scale = std_s; // How many standard deviations to look ahead for player survival time cutoff (i.e. which are selected for cloning and mutation)
 }
 
 generation::generation(std::string nombre, std::string parent){
@@ -19,7 +20,7 @@ generation::generation(std::string nombre, std::string parent){
 }
 
 void generation::reload(std::string filename){
-	// Reload a generation from file.
+	/// Reload a generation from file.
 	std::string	line;
 	std::vector<std::string> vline;
 

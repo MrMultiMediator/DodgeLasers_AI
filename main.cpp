@@ -8,7 +8,6 @@
 #include "laser.h"
 #include "gSettings.h"
 #include "fcns.h"
-//#include "collision_detect.h"
 
 //if (!background.loadFromFile("assets/background.png")) std::cout << "Could not load assets/background.png";
 
@@ -20,8 +19,9 @@ int main(int argc, char *argv[])
 	std::string directive(argv[2]); // File to read in current generation from. If it says "None", start new generation
 	std::string line;
 	std::vector<std::string> vline;
+	std::ifstream inp(directive); // Not sure why this doesn't throw an error. Sometimes the file "directive" doesn't even exist. Maybe it's because we don't try reading it in that case
 
-	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png"); // Game settings object
+	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png",0.5); // Game settings object
 	generation *gen = new generation(gen_random(12), "None"); // New generation object. Parent generation name is the second parameter.
 	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 
@@ -47,9 +47,7 @@ int main(int argc, char *argv[])
 	std::vector<player> players;
 
 	// Reload players from file. Open file and skip first five lines which are relevant for the generation on the whole but not the players.
-	std::ifstream inp(directive);
 	if (directive != "None"){
-		//std::ifstream inp(directive);
 		std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line);
 	}
 	for (int i = 0; i < gs->nplayers; i++){
@@ -118,7 +116,7 @@ int main(int argc, char *argv[])
 		//std::cout << "N_lasers = " << gen->N_lasers << "\n";
 		check_reached_end(lasers, gen->N_lasers, gen->laser_x_vels); //If any lasers have reached the end of the screen, delete them
 		collision_detect(lasers, players); //Detect collisions between lasers and players
-		check_restart(players, lasers, gs->sampleLimit, gen);
+		check_restart(players, lasers, gs, gen);
 		
 		window.display();
 	}

@@ -2,6 +2,7 @@
 #include <stdlib.h> //For rand()
 #include <cmath> //For exp
 #include <SFML/Graphics.hpp>
+#include <numeric>
 #include <time.h> //For seeding the random number generator w/ current time
 #include "player.h"
 #include "laser.h"
@@ -28,10 +29,10 @@ void player::revive(){
 	st_arr.push_back(stime);
 	stime = 0.;
 
-	for (int i = 0; i < st_arr.size(); i++){
-		std::cout << st_arr[i] << " ";
-	}
-	std::cout << "\n";
+	//for (int i = 0; i < st_arr.size(); i++){
+	//	std::cout << st_arr[i] << " ";
+	//}
+	//std::cout << "\n";
 }
 
 /* Need to pass in texture by reference to avoid white square problem. This is because passing by value only passes
@@ -109,6 +110,7 @@ double NeuralNet::activate(double val){
 }
 
 void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lasers){
+	/// Reload the inputs to the neural network from the current game state (positions and velocities of lasers and current player)
 	int j = 1;
 	double mean_las_vel = -4.5;
 	double std_las_vel = 2.0;
@@ -141,6 +143,7 @@ void NeuralNet::reload_NN(std::string w, std::string b, int nlasers){
 }
 
 void NeuralNet::propagate(){
+	/// Feedforward (i.e propagate) Neural Network.
 	double temp = 0.0;
 	for (int i = 0; i < inputs.size(); i++){
 		temp += weights[i]*inputs[i];
@@ -150,6 +153,7 @@ void NeuralNet::propagate(){
 }
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
+	/// Detect collisions between players and lasers. If a collision is detected, kill that player.
 	int count1, count2;
 	count1=0;
 	for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
@@ -168,8 +172,7 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 	}
 }
 
-//void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, int lasers_ever, int &N_death_cycles, std::vector<double> laser_x_vels){
-void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int sample_limit, generation *gen){
+void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSettings *gs, generation *gen){
 
 	// If any players are still alive, exit the function immediately
 	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
@@ -177,7 +180,47 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 	}
 
 	// All players are dead
-	if (gen->N_lasers >= sample_limit){
+	// Sample limit has been reached. Create a new generation
+	if (gen->N_lasers >= gs->sampleLimit){
+		// X Step 1: Calculate average of the average player survival times
+		// X Step 2: Calculate average standard deviations for player survival times
+		// X Step 3: Calculate maximum average survival time ('best player')
+		//  Step 4: Clone and mutate the most fit players. Create a temporary new vector of "seed" players,
+		//		   and sample from those. After the seed players are created, replace the Neural Network
+		//		   parameters in the original set of players with the new set of parameters.  Then delete
+		//		   the temporary new vector of players.
+		std::vector<player> seed_players;
+		double average, std_dev, max_stime; // Average of average player survival times, average of std. dev of player survival times, maximum average player survival time (i.e. best player)
+		double sum = 0., sq_sum = 0.;
+		int counter = 0;
+		std::vector<double> stime,std_dev_data; // Vectors that hold the average survival times of each player, and standard deviations for survival time of each player.
+		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+			sum = std::accumulate((*itplay).st_arr.begin(), (*itplay).st_arr.end(), 0.0);
+			(*itplay).st_ave = sum/(*itplay).st_arr.size();
+			sq_sum = std::inner_product((*itplay).st_arr.begin(), (*itplay).st_arr.end(), (*itplay).st_arr.begin(), 0.0);
+			(*itplay).st_std = std::sqrt(sq_sum/((*itplay).st_arr.size()) - pow((*itplay).st_ave, 2));
+
+			stime.push_back((*itplay).st_ave);
+			std_dev_data.push_back((*itplay).st_std);
+
+			//std::cout << "Player " << counter << " average survival time = " << (*itplay).st_ave << " +/- " <<(*itplay).st_std << "\n";
+			counter++;
+
+			sum = 0.; sq_sum = 0.;
+		}
+
+		sum = std::accumulate(stime.begin(), stime.end(), 0.0);
+		average = sum/stime.size(); sum = 0.;
+		sum = std::accumulate(std_dev_data.begin(), std_dev_data.end(), 0.0);
+		std_dev = sum/std_dev_data.size();
+
+		max_stime = *std::max_element(stime.begin(), stime.end());
+		std::cout << "Max survival time = " << max_stime << "\n";
+
+		// Populate the seed_players vector with the best players
+		select(players, seed_players, average, std_dev, max_stime, gs->std_scale);
+
+		stime.clear(); std_dev_data.clear();
 
 	// If the sample limit hasn't been reached, revive all players. Write a temporary data file as well.
 	} else {
@@ -190,6 +233,10 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, int
 		gen->N_death_cycles++;
 		write_temp_data(gen, players);
 		std::cout << "N_death_cycles = " << gen->N_death_cycles << "\n";
-		//std::cout << "N_lasers = " << gen->N_lasers << "\n";
+		std::cout << "N_lasers = " << gen->N_lasers << "\n";
 	}
+}
+
+void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale){
+	return;
 }

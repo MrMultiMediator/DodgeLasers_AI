@@ -8,9 +8,10 @@ class gSettings
 public:
 	//Number of players, and the number of lasers that the current generation of players has seen
 	int nplayers, sampleLimit;
+	double std_scale; // How many standard deviations to look ahead for player survival time cutoff (i.e. which are selected for cloning and mutation)
 	sf::Texture play;
 	sf::Texture lasertexture;
-	gSettings(int, int, const std::string& fname, const std::string& lname);
+	gSettings(int, int, const std::string& fname, const std::string& lname, double);
 };
 
 class generation

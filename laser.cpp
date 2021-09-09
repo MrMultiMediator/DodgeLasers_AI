@@ -30,9 +30,11 @@ void laser::draw(sf::RenderWindow & window){
 }
 
 void check_reached_end(std::vector<laser> &lasers, int &lasers_ever, std::vector<double> &laser_x_vels){
-	//See if any laser has reached the end of the screen. If yes, delete the laser and create a new one.
-	//Passing vector by reference to allow manipulation of the laser vector outside
-	//of its original scope (the main function). Not a class function
+	/**
+	 * See if any laser has reached the end of the screen. If yes, delete the laser and create a new one.
+	 * Passing vector by reference to allow manipulation of the laser vector outside
+	 * of its original scope (the main function). Not a class function
+	 */
 
 	std::vector<int> todelete; //Specifies which elements to delete of the lasers vector.
 	int counter = 0; //Enumerates the current element when checking if it's reached the end.
