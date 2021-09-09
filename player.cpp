@@ -185,10 +185,10 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		// X Step 1: Calculate average of the average player survival times
 		// X Step 2: Calculate average standard deviations for player survival times
 		// X Step 3: Calculate maximum average survival time ('best player')
-		//  Step 4: Clone and mutate the most fit players. Create a temporary new vector of "seed" players,
-		//		   and sample from those. After the seed players are created, replace the Neural Network
-		//		   parameters in the original set of players with the new set of parameters.  Then delete
-		//		   the temporary new vector of players.
+		// X Step 4: Write player and generation information to archive.
+		// X Step 5: Create a temporary new vector of "seed" players.
+		//	Step 6: Sample from seed players. Replace the Neural Network parameters in the original set of
+		//			players with the new set of parameters mutated or cloned from the seed players.
 		std::vector<player> seed_players;
 		double average, std_dev, max_stime; // Average of average player survival times, average of std. dev of player survival times, maximum average player survival time (i.e. best player)
 		double sum = 0., sq_sum = 0.;
@@ -196,6 +196,8 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		std::vector<double> stime,std_dev_data; // Vectors that hold the average survival times of each player, and standard deviations for survival time of each player.
 
 		write_temp_data(gen, players);
+		write_gen(gen);
+		write_players(gen, players);
 
 		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 			sum = std::accumulate((*itplay).st_arr.begin(), (*itplay).st_arr.end(), 0.0);
@@ -223,6 +225,12 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 
 		// Populate the seed_players vector with the best players
 		select(players, seed_players, average, std_dev, max_stime, gs->std_scale, gen->N_lasers);
+
+		// Clone the seed players
+		// clone(seed_players, players);
+
+		// Mutate the seed players until we reach the total number of players
+		// mutate(seed_players, players)
 
 		std::cout << "Done\n\n";
 
