@@ -35,6 +35,15 @@ void player::revive(){
 	//std::cout << "\n";
 }
 
+void player::birth(){
+	/// Similar to revive, but it is for a newly born player in a new generation. st_arr doesn't need a push_back.
+	state = "a";
+	posy = 250.;
+	vely = 0.5*dvely;
+	stime = 0.;
+	st_arr.clear();
+}
+
 /* Need to pass in texture by reference to avoid white square problem. This is because passing by value only passes
 in a copy which is destroyed when the function ends. The texture needs to persist, so I need to pass it by reference.
 According to the docs, "the texture must exist as long as the sprite uses it". And the sprite needs to use it, even
@@ -173,7 +182,7 @@ void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
 }
 
 void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSettings *gs, generation *gen){
-
+	/// Check if all players have died. If not, exit the function. If so, check if N_lasers > sampleLimit and act accordingly (revive if not, new generation if so)
 	// If any players are still alive, exit the function immediately
 	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 		if ((*itplay).state == "a") return;
@@ -226,11 +235,17 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		// Populate the seed_players vector with the best players
 		select(players, seed_players, average, std_dev, max_stime, gs->std_scale, gen->N_lasers);
 
-		// Clone the seed players
+		// Clone the seed players (i.e. give some players the same neural net as the seed players)
 		// clone(seed_players, players);
 
-		// Mutate the seed players until we reach the total number of players
+		// Mutate the seed players until we reach the total number of players (i.e. give the remaining players mutated versions of the seed players' neural nets)
 		// mutate(seed_players, players)
+
+		// Rebirth the generation (i.e. change the settings appropriately: Rename, set parent name, etc)
+		//std::string name = gen->name;
+		//gen.birth(gen_random(12), name);
+
+		// Rebirth all players (ie. change the settings appropriately: Set state to 'alive', survival time to zero, clear survival time array, etc)
 
 		std::cout << "Done\n\n";
 

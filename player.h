@@ -32,6 +32,7 @@ public:
 
 	player(int IDD, int nlasers);
 	void revive();
+	void birth();
 	void update(sf::Texture&); //Need to pass in texture by reference to avoid white square problem
 	void draw(sf::RenderWindow & window);
 	void reload_inputs(std::vector<laser> &lasers); //Reload the input neurons with data

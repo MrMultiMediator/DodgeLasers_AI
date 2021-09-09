@@ -23,4 +23,5 @@ public:
 	std::string name, best_player, parent_gen;
 	generation(std::string, std::string);
 	void reload(std::string filename);
+	void birth(std::string, std::string);
 };

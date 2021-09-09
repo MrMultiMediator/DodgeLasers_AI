@@ -19,6 +19,14 @@ generation::generation(std::string nombre, std::string parent){
 	std::cout << "New generation " << name << "\n";
 }
 
+void generation::birth(std::string nombre, std::string parent){
+	N_lasers = 0;
+	N_death_cycles = 0;
+	name = nombre;
+	parent_gen = parent;
+	std::cout << "New generation " << name << "\n";
+}
+
 void generation::reload(std::string filename){
 	/// Reload a generation from file.
 	std::string	line;
