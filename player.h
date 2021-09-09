@@ -41,6 +41,6 @@ public:
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players);
 void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSettings *gs, generation *gen);
-void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale);
+void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale, int N_lasers);
 
 #endif

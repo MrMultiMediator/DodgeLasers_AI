@@ -194,6 +194,9 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		double sum = 0., sq_sum = 0.;
 		int counter = 0;
 		std::vector<double> stime,std_dev_data; // Vectors that hold the average survival times of each player, and standard deviations for survival time of each player.
+
+		write_temp_data(gen, players);
+
 		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
 			sum = std::accumulate((*itplay).st_arr.begin(), (*itplay).st_arr.end(), 0.0);
 			(*itplay).st_ave = sum/(*itplay).st_arr.size();
@@ -215,10 +218,13 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		std_dev = sum/std_dev_data.size();
 
 		max_stime = *std::max_element(stime.begin(), stime.end());
-		std::cout << "Max survival time = " << max_stime << "\n";
+		std::cout << "Data collection complete\nMax average survival time = " << max_stime << "\n";
+		std::cout << "Extracting most fit players as seed players for next generation...\n";
 
 		// Populate the seed_players vector with the best players
-		select(players, seed_players, average, std_dev, max_stime, gs->std_scale);
+		select(players, seed_players, average, std_dev, max_stime, gs->std_scale, gen->N_lasers);
+
+		std::cout << "Done\n\n";
 
 		stime.clear(); std_dev_data.clear();
 
@@ -237,6 +243,34 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 	}
 }
 
-void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale){
-	return;
+void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale, int N_lasers){
+	double a = 1.0;
+	double shift = average + std_scale*std_dev; //This will make x = 0 for the analytic function that determines the probability be set to the std cutoff distance (minimum lookout point)
+	double factor1 = log(2.)/(max_stime-shift);
+	double stat, x;
+	int select_counter = 0, fit_counter = 0, i = 0;
+
+	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+		x = ((*itplay).st_ave-shift)*factor1*(std_dev/(*itplay).st_std);
+
+		//Avoid division by zero for players with extremely small average standard deviation.
+		if ((*itplay).st_std < 0.1) x = ((*itplay).st_ave-shift)*factor1*(std_dev/0.1);
+
+		stat = rand_gen();
+		stat = 0.;
+		//Add player i to seed_players if the selection function value is greater than the random number stat
+		if (exp(a*x)-0.9 > stat){
+			seed_players.push_back(player(select_counter, N_lasers));
+			std::cout << i << "  " << exp(a*x) << "  survival time = " << (*itplay).st_ave << " +/- " << (*itplay).st_std << " " << stat << "\n";
+			select_counter++;
+		}
+		//Keep track of the number of players that were qualified, so we can determine how many of the qualified players ultimately were selected
+		if (exp(a*x)-0.9 > 0){
+			fit_counter++;
+		}
+		i++;
+	}
+	std::cout << fit_counter << "   fit players\n";
+	std::cout << select_counter << "   fit players selected for next generation.\n";
+	std::cout << stat << "\n";
 }
