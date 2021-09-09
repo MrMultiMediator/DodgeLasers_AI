@@ -14,6 +14,7 @@ public:
 	NeuralNet(int, int);
 	double activate(double val);
 	void reload_inputs(double vely, double posy, std::vector<laser> &lasers);
+	void reload_NN(std::string w, std::string b, int nlasers); // Reload Neural Net parameters from file
 	void propagate(); // Forward propagation to get output value
 };
 
@@ -34,6 +35,7 @@ public:
 	void update(sf::Texture&); //Need to pass in texture by reference to avoid white square problem
 	void draw(sf::RenderWindow & window);
 	void reload_inputs(std::vector<laser> &lasers); //Reload the input neurons with data
+	void reload_NN(std::string st, std::string w, std::string b, int nlasers); // Reload Neural Net parameetrs from file
 	void propagate(); // Forward propagation to get output value
 };
 

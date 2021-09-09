@@ -63,11 +63,22 @@ void player::update(sf::Texture& play){
 
 void player::draw(sf::RenderWindow & window){
 	if (state == "a") window.draw(sprite);
-	//window.draw(sprite);
 }
 
 void player::reload_inputs(std::vector<laser> &lasers){
 	NN.reload_inputs(vely, posy, lasers);
+}
+
+void player::reload_NN(std::string st, std::string w, std::string b, int nlasers){
+	/// Reload Neural Network from file for this player
+	std::vector<std::string> vline;
+	split2(st, vline);
+
+	for (std::vector<std::string>::iterator itst = vline.begin()+1; itst != vline.end(); ++itst){
+		st_arr.push_back(stoi(*itst));
+	}
+	vline.clear();
+	NN.reload_NN(w, b, nlasers);
 }
 
 void player::propagate(){
@@ -111,6 +122,22 @@ void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lase
 		inputs[j+2] = (lasers[i].velx - mean_las_vel)/std_las_vel; // Laser x velocities. Shifted by mean velocity and normalized by standard deviation.
 		j += 3;
 	}
+}
+
+void NeuralNet::reload_NN(std::string w, std::string b, int nlasers){
+	/// Reload Neural Network from file for this player
+	std::vector<std::string> vline;
+	int counter = 0;
+	split2(w, vline);
+
+	for (std::vector<std::string>::iterator itw = vline.begin()+1; itw != vline.end(); ++itw){
+		weights[counter] = stod(*itw);
+		counter++;
+	}
+	vline.clear();
+	split2(b, vline);
+	bias = stod(vline[1]);
+	vline.clear();
 }
 
 void NeuralNet::propagate(){

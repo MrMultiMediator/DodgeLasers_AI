@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "iostream"
+#include "fstream"
 #include <SFML/Graphics.hpp>
 #include "background.h"
 #include "player.h"
@@ -17,9 +18,12 @@ int main(int argc, char *argv[])
 	bool pressed = false;
 	bool cr = false;
 	std::string directive(argv[2]); // File to read in current generation from. If it says "None", start new generation
+	std::string line;
+	std::vector<std::string> vline;
 
 	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png"); // Game settings object
-	generation *gen = new generation(gen_random(12), "None"); // New generation object. Parent generation name is a command line object.
+	generation *gen = new generation(gen_random(12), "None"); // New generation object. Parent generation name is the second parameter.
+	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 
 	double posx = 0.0, posy = 0.0;
 
@@ -31,8 +35,6 @@ int main(int argc, char *argv[])
 	bg.push_back(*bg1);
 	bg.push_back(*bg2);
 
-	gen->reload(directive); // Reload a previous generation from file if the user requests it.
-
 	//Generate lasers. The numer of lasers is a command line argument.
 	std::vector<laser> lasers; //stack allocation
 	for (int i = 0; i < std::stoi(argv[1]); i++){
@@ -41,11 +43,30 @@ int main(int argc, char *argv[])
 		gen->N_lasers++;
 	}
 
-	//Generate players
+	// Generate players
 	std::vector<player> players;
+
+	// Reload players from file. Open file and skip first five lines which are relevant for the generation on the whole but not the players.
+	std::ifstream inp(directive);
+	if (directive != "None"){
+		//std::ifstream inp(directive);
+		std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line);
+	}
 	for (int i = 0; i < gs->nplayers; i++){
 		players.push_back(player(i, std::stoi(argv[1])));
+
+		// Reload Neural Network from file
+		if (directive != "None"){
+			std::getline(inp, line); vline.push_back(line);
+			std::getline(inp, line); vline.push_back(line);
+			std::getline(inp, line); vline.push_back(line);
+			// Reload Neural Net here. Pass in the three lines of the file relevant for this player, and the number of lasers
+			players[i].reload_NN(vline[0], vline[1], vline[2], std::stoi(argv[1]));
+			vline.clear();
+		}
 	}
+
+	if (directive != "None") inp.close();
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Dodge Lasers");
 	window.setFramerateLimit(60);
