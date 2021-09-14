@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	std::vector<std::string> vline;
 	std::ifstream inp(directive); // Not sure why this doesn't throw an error. Sometimes the file "directive" doesn't even exist. Maybe it's because we don't try reading it in that case
 
-	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png",0.5); // Game settings object
+	gSettings *gs = new gSettings(50,30,"assets/player.png","assets/spear.png",0.5); // Game settings object
 	generation *gen = new generation(gen_random(12), "None", std::stoi(argv[1])); // New generation object. Parent generation name is the second parameter.
 	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 

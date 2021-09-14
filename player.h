@@ -16,7 +16,8 @@ public:
 	void reload_inputs(double vely, double posy, std::vector<laser> &lasers);
 	void reload_NN(std::string w, std::string b, int nlasers); // Reload Neural Net parameters from file
 	void propagate(); // Forward propagation to get output value
-	void clone(NeuralNet ref_net, int n_LOS);
+	void clone(NeuralNet ref_net);
+	void mutate(NeuralNet ref_net, double mmag, std::string mutate_style);
 };
 
 class player
@@ -39,7 +40,8 @@ public:
 	void reload_inputs(std::vector<laser> &lasers); //Reload the input neurons with data
 	void reload_NN(std::string st, std::string w, std::string b, int nlasers); // Reload Neural Net parameetrs from file
 	void propagate(); // Forward propagation to get output value
-	void clone(player &seed_player, int);
+	void clone(player &seed_player);
+	void mutate(player &seed_player, double mmag, std::string mutate_style);
 };
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players);

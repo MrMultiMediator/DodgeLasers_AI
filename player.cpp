@@ -95,9 +95,14 @@ void player::propagate(){
 	NN.propagate();
 }
 
-void player::clone(player &seed_player, int n_LOS){
-	/// Copy the parameters from  seed_player's neural net to the current player's neural net.
-	NN.clone(seed_player.NN, n_LOS);
+void player::clone(player &seed_player){
+	/// Copy the parameters from seed_player's neural net to the current player's neural net.
+	NN.clone(seed_player.NN);
+}
+
+void player::mutate(player &seed_player, double mmag, std::string mutate_style){
+	/// Copy a mutated version of the seed_player's neural net to the current player's neural net.
+	NN.mutate(seed_player.NN, mmag, mutate_style);
 }
 
 NeuralNet::NeuralNet(int IDD, int nlasers){
@@ -165,11 +170,32 @@ void NeuralNet::propagate(){
 	output = activate(temp);
 }
 
-void NeuralNet::clone(NeuralNet ref_net, int n_LOS){
+void NeuralNet::clone(NeuralNet ref_net){
 	/// Copy the parameters from the reference neural net to the current neural net.
 	bias = ref_net.bias;
 	for (int i = 0; i < ref_net.weights.size(); i++){
 		weights[i] = ref_net.weights[i];
+	}
+}
+
+void NeuralNet::mutate(NeuralNet ref_net, double mmag, std::string mutate_style){
+	/// Copy a mutated version of the refernce neural net's parameters to the current player's neural net.
+	double mutation = 0.;
+	bias = ref_net.bias;
+	weights[0] = ref_net.weights[0];
+
+	if (mutate_style == "rel"){
+		for (int i = 1; i < ref_net.weights.size(); i++){
+			mutation = mmag*(rand_gen()-0.5);
+			weights[i] = ref_net.weights[i] + mutation;
+		}
+	} else if (mutate_style == "abs"){
+		for (int i = 1; i < ref_net.weights.size(); i++){
+			mutation = ref_net.weights[i]*mmag*(rand_gen()-0.5);
+			weights[i] = ref_net.weights[i] + mutation;
+		}
+	} else {
+		std::cout << "ERROR: mutate style could not be found\n";
 	}
 }
 
@@ -214,6 +240,7 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		double average, std_dev, max_stime; // Average of average player survival times, average of std. dev of player survival times, maximum average player survival time (i.e. best player)
 		double sum = 0., sq_sum = 0.;
 		int counter = 0;
+		int spnum; // Seed player number
 		std::vector<double> stime,std_dev_data; // Vectors that hold the average survival times of each player, and standard deviations for survival time of each player.
 
 		write_temp_data(gen, players);
@@ -250,18 +277,26 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 
 		// Clone the seed players (i.e. give some players the same neural net as the seed players)
 		for (std::vector<player>::iterator itplay = seed_players.begin(); itplay != seed_players.end(); ++itplay){
-			players[counter].clone((*itplay), gen->n_LOS);
+			players[counter].clone((*itplay));
 			counter++;
 		}
 
 		// Mutate the seed players until we reach the total number of players (i.e. give the remaining players mutated versions of the seed players' neural nets)
-		// mutate(seed_players, players)
+		// Use all seed players uniformly, showing no preference for better players among them.
+		while (counter < players.size()){
+			spnum = counter % seed_players.size();
+			players[counter].mutate(seed_players[spnum], gen->mmag, gen->mutate_style);
+			counter++;
+		}
 
 		// Rebirth the generation (i.e. change the settings appropriately: Rename, set parent name, etc)
-		//std::string name = gen->name;
-		//gen.birth(gen_random(12), name);
+		std::string name = gen->name;
+		gen->birth(gen_random(12), name);
 
 		// Rebirth all players (ie. change the settings appropriately: Set state to 'alive', survival time to zero, clear survival time array, etc)
+		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+			(*itplay).birth();
+		}
 
 		std::cout << "Done\n\n";
 
@@ -300,7 +335,7 @@ void select(std::vector<player> &players, std::vector<player> &seed_players, dou
 		//Add player i to seed_players if the selection function value is greater than the random number stat
 		if (exp(a*x)-0.9 > stat){
 			seed_players.push_back(player(select_counter, N_lasers));
-			seed_players.back().clone((*itplay), N_lasers);
+			seed_players.back().clone((*itplay));
 			std::cout << i << "  " << exp(a*x) << "  survival time = " << (*itplay).st_ave << " +/- " << (*itplay).st_std << " " << stat << "\n";
 			select_counter++;
 		}
