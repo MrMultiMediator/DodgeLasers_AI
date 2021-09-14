@@ -18,10 +18,11 @@ class generation
 {
 
 public:
-	int N_lasers, N_death_cycles;
+	int N_lasers, N_death_cycles, n_LOS; // n_LOS = Number of lasers on screen
+	double mmag; // Mutation magnitude
 	std::vector<double> laser_x_vels;
-	std::string name, best_player, parent_gen;
-	generation(std::string, std::string);
+	std::string name, best_player, parent_gen, mutate_style; // Mutate style: 'abs' or 'rel' = absolute or relative
+	generation(std::string, std::string, int);
 	void reload(std::string filename);
 	void birth(std::string, std::string);
 };

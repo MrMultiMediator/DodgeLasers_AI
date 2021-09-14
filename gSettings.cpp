@@ -11,7 +11,10 @@ gSettings::gSettings(int i, int sL, const std::string& fname, const std::string&
 	std_scale = std_s; // How many standard deviations to look ahead for player survival time cutoff (i.e. which are selected for cloning and mutation)
 }
 
-generation::generation(std::string nombre, std::string parent){
+generation::generation(std::string nombre, std::string parent, int nl){
+	n_LOS = nl;
+	mmag = 0.05;
+	mutate_style = "abs";
 	N_lasers = 0;
 	N_death_cycles = 0;
 	name = nombre;

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	std::ifstream inp(directive); // Not sure why this doesn't throw an error. Sometimes the file "directive" doesn't even exist. Maybe it's because we don't try reading it in that case
 
 	gSettings *gs = new gSettings(30,100,"assets/player.png","assets/spear.png",0.5); // Game settings object
-	generation *gen = new generation(gen_random(12), "None"); // New generation object. Parent generation name is the second parameter.
+	generation *gen = new generation(gen_random(12), "None", std::stoi(argv[1])); // New generation object. Parent generation name is the second parameter.
 	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 
 	double posx = 0.0, posy = 0.0;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 	//Generate lasers. The numer of lasers is a command line argument.
 	std::vector<laser> lasers; //stack allocation
-	for (int i = 0; i < std::stoi(argv[1]); i++){
+	for (int i = 0; i < gen->n_LOS; i++){
 		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
 		lasers.push_back(laser(-norm_dist(4.5, 2.), gen->laser_x_vels)); //stack allocation
 		gen->N_lasers++;
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 		std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line); std::getline(inp, line);
 	}
 	for (int i = 0; i < gs->nplayers; i++){
-		players.push_back(player(i, std::stoi(argv[1])));
+		players.push_back(player(i, gen->n_LOS));
 
 		// Reload Neural Network from file
 		if (directive != "None"){
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 			std::getline(inp, line); vline.push_back(line);
 			std::getline(inp, line); vline.push_back(line);
 			// Reload Neural Net here. Pass in the three lines of the file relevant for this player, and the number of lasers
-			players[i].reload_NN(vline[0], vline[1], vline[2], std::stoi(argv[1]));
+			players[i].reload_NN(vline[0], vline[1], vline[2], gen->n_LOS);
 			vline.clear();
 		}
 	}

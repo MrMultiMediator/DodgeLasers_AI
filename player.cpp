@@ -95,6 +95,10 @@ void player::propagate(){
 	NN.propagate();
 }
 
+void player::clone(player &seed_player, int n_LOS){
+	/// Copy the parameters from  seed_player's neural net to the current player's neural net.
+	NN.clone(seed_player.NN, n_LOS);
+}
 
 NeuralNet::NeuralNet(int IDD, int nlasers){
 	srand((unsigned)time( NULL )+IDD); //Use current time as seed for random number generator.
@@ -159,6 +163,14 @@ void NeuralNet::propagate(){
 	}
 	temp += bias;
 	output = activate(temp);
+}
+
+void NeuralNet::clone(NeuralNet ref_net, int n_LOS){
+	/// Copy the parameters from the reference neural net to the current neural net.
+	bias = ref_net.bias;
+	for (int i = 0; i < ref_net.weights.size(); i++){
+		weights[i] = ref_net.weights[i];
+	}
 }
 
 void collision_detect(std::vector<laser> &lasers, std::vector<player> &players){
@@ -233,10 +245,14 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		std::cout << "Extracting most fit players as seed players for next generation...\n";
 
 		// Populate the seed_players vector with the best players
-		select(players, seed_players, average, std_dev, max_stime, gs->std_scale, gen->N_lasers);
+		select(players, seed_players, average, std_dev, max_stime, gs->std_scale, gen->n_LOS);
+		counter = 0;
 
 		// Clone the seed players (i.e. give some players the same neural net as the seed players)
-		// clone(seed_players, players);
+		for (std::vector<player>::iterator itplay = seed_players.begin(); itplay != seed_players.end(); ++itplay){
+			players[counter].clone((*itplay), gen->n_LOS);
+			counter++;
+		}
 
 		// Mutate the seed players until we reach the total number of players (i.e. give the remaining players mutated versions of the seed players' neural nets)
 		// mutate(seed_players, players)
@@ -261,12 +277,12 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 		}
 		gen->N_death_cycles++;
 		write_temp_data(gen, players);
-		std::cout << "N_death_cycles = " << gen->N_death_cycles << "\n";
-		std::cout << "N_lasers = " << gen->N_lasers << "\n";
+		std::cout << "N_death_cycles = " << gen->N_death_cycles << ", N_lasers = " << gen->N_lasers << "\n";
 	}
 }
 
 void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale, int N_lasers){
+	/// N_lasers in this case equals the number of lasers on the screen (not N_lasers ever which is the standard meaning)
 	double a = 1.0;
 	double shift = average + std_scale*std_dev; //This will make x = 0 for the analytic function that determines the probability be set to the std cutoff distance (minimum lookout point)
 	double factor1 = log(2.)/(max_stime-shift);
@@ -284,6 +300,7 @@ void select(std::vector<player> &players, std::vector<player> &seed_players, dou
 		//Add player i to seed_players if the selection function value is greater than the random number stat
 		if (exp(a*x)-0.9 > stat){
 			seed_players.push_back(player(select_counter, N_lasers));
+			seed_players.back().clone((*itplay), N_lasers);
 			std::cout << i << "  " << exp(a*x) << "  survival time = " << (*itplay).st_ave << " +/- " << (*itplay).st_std << " " << stat << "\n";
 			select_counter++;
 		}
