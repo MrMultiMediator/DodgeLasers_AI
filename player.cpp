@@ -115,11 +115,14 @@ NeuralNet::NeuralNet(int IDD, int nlasers){
 
 	for (int i = 0; i < nlasers; i++){
 		inputs.push_back(0.0); //Delta_y: Difference between player y and laser y
-		weights.push_back(2.*rand_gen()-1.);
+		//weights.push_back(2.*rand_gen()-1.);
+		weights.push_back(0.);
 		inputs.push_back(0.0); //Delta_x: Laser x position relative to player surface (where collisions start)
-		weights.push_back(2.*rand_gen()-1.);
+		//weights.push_back(2.*rand_gen()-1.);
+		weights.push_back(0.);
 		inputs.push_back(0.0); //Laser x velocities
-		weights.push_back(2.*rand_gen()-1.);
+		//weights.push_back(2.*rand_gen()-1.);
+		weights.push_back(0.);
 	}
 }
 
@@ -130,16 +133,30 @@ double NeuralNet::activate(double val){
 void NeuralNet::reload_inputs(double vely, double posy, std::vector<laser> &lasers){
 	/// Reload the inputs to the neural network from the current game state (positions and velocities of lasers and current player)
 	int j = 1;
-	double mean_las_vel = -4.5;
-	double std_las_vel = 2.0;
+	double mean_las_vel = -4.6;
+	double std_las_vel = 2.25;
 	inputs[0] = vely/30.;
 	//std::cout << output << "\n";
 	//x = 798 -> 25, y = 46 -> 556
 
 	for (int i = 0; i < lasers.size(); i++){
-		inputs[j] = (posy - lasers[i].posy + 39)/510.; // Delta_y: Difference between player y and laser y shifted by 39 so that the zero point is when the laser is right in the middle of the player. Normalized by playable game width
-		inputs[j+1] = (lasers[i].posx - 25)/773.; // Delta_x: Laser x position relative to player surface (where collisions start)
-		inputs[j+2] = (lasers[i].velx - mean_las_vel)/std_las_vel; // Laser x velocities. Shifted by mean velocity and normalized by standard deviation.
+		//inputs[j] = (posy - lasers[i].posy + 39)/510.; // Delta_y: Difference between player y and laser y shifted by 39 so that the zero point is when the laser is right in the middle of the player. Normalized by playable game width
+		//inputs[j+1] = (lasers[i].posx - 25)/773.; // Delta_x: Laser x position relative to player surface (where collisions start)
+		//inputs[j+2] = (lasers[i].velx - mean_las_vel)/std_las_vel; // Laser x velocities. Shifted by mean velocity and normalized by standard deviation.
+
+		//inputs[j] = (510.-(posy - lasers[i].posy + 39))/510.; // Delta_y: Difference between player y and laser y shifted by 39 so that the zero point is when the laser is right in the middle of the player. Normalized by playable game height
+		//inputs[j+1] = (800.1-lasers[i].posx)/800.; // Laser x position set so that the value of the neuron grows as the laser gets closer, rather than shrinks (the game works such that the lasers are travelling in the negative x-direction). Value will be between 0 and 1.
+		//inputs[j+2] = (lasers[i].velx)/(mean_las_vel-std_las_vel); // Laser x velocities normalized by mean laser velocity plus the standard deviation (i.e. so that most players have a value less than 1).
+
+		if (abs(posy - lasers[i].posy + 39) < 100.){
+			inputs[j] = (100.-abs(posy - lasers[i].posy + 39))/100.;
+		} else inputs[j] = 0.;
+		inputs[j] *= (posy - lasers[i].posy + 39)/abs(posy - lasers[i].posy + 39);
+		inputs[j] *= (800.1-lasers[i].posx)/800.;
+		inputs[j] *= ((lasers[i].velx)/(mean_las_vel-std_las_vel)); // Laser x velocities normalized by mean laser velocity plus the standard deviation (i.e. so that most players have a value less than 1).
+		inputs[j+1] = 0.;
+		inputs[j+2] = 0.;
+
 		j += 3;
 	}
 }
@@ -191,8 +208,14 @@ void NeuralNet::mutate(NeuralNet ref_net, double mmag, std::string mutate_style)
 		}
 	} else if (mutate_style == "abs"){
 		for (int i = 1; i < ref_net.weights.size(); i++){
-			mutation = ref_net.weights[i]*mmag*(rand_gen()-0.5);
-			weights[i] = ref_net.weights[i] + mutation;
+			// One out of every four players will have a single weight with a wildcard
+			if (rand_gen() > (1./(4.*weights.size()))){
+				mutation = ref_net.weights[i]*mmag*(rand_gen()-0.5);
+				weights[i] = ref_net.weights[i] + mutation;
+			} else { // Wildcard
+				std::cout << "Wildcard activated\n";
+				weights[i] = rand_gen()*0.002-0.001;
+			}
 		}
 	} else {
 		std::cout << "ERROR: mutate style could not be found\n";
@@ -298,6 +321,10 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 			(*itplay).birth();
 		}
 
+		for (std::vector<laser>::iterator itlas = lasers.begin(); itlas != lasers.end(); ++itlas){
+			(*itlas).todelete = true;
+		}
+
 		std::cout << "Done\n\n";
 
 		stime.clear(); std_dev_data.clear();
@@ -318,32 +345,34 @@ void check_restart(std::vector<player> &players, std::vector<laser> &lasers, gSe
 
 void select(std::vector<player> &players, std::vector<player> &seed_players, double average, double std_dev, double max_stime, double std_scale, int N_lasers){
 	/// N_lasers in this case equals the number of lasers on the screen (not N_lasers ever which is the standard meaning)
-	double a = 1.0;
+	double a = 0.5;
 	double shift = average + std_scale*std_dev; //This will make x = 0 for the analytic function that determines the probability be set to the std cutoff distance (minimum lookout point)
 	double factor1 = log(2.)/(max_stime-shift);
 	double stat, x;
 	int select_counter = 0, fit_counter = 0, i = 0;
 
-	for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
-		x = ((*itplay).st_ave-shift)*factor1*(std_dev/(*itplay).st_std);
+	while (select_counter <= 0){
+		for (std::vector<player>::iterator itplay = players.begin(); itplay != players.end(); ++itplay){
+			x = ((*itplay).st_ave-shift)*factor1*(std_dev/(*itplay).st_std);
 
-		//Avoid division by zero for players with extremely small average standard deviation.
-		if ((*itplay).st_std < 0.1) x = ((*itplay).st_ave-shift)*factor1*(std_dev/0.1);
+			//Avoid division by zero for players with extremely small average standard deviation.
+			if ((*itplay).st_std < 0.1) x = ((*itplay).st_ave-shift)*factor1*(std_dev/0.1);
 
-		stat = rand_gen();
-		stat = 0.;
-		//Add player i to seed_players if the selection function value is greater than the random number stat
-		if (exp(a*x)-0.9 > stat){
-			seed_players.push_back(player(select_counter, N_lasers));
-			seed_players.back().clone((*itplay));
-			std::cout << i << "  " << exp(a*x) << "  survival time = " << (*itplay).st_ave << " +/- " << (*itplay).st_std << " " << stat << "\n";
-			select_counter++;
+			stat = 1.5*rand_gen();
+			//stat = 0.;
+			//Add player i to seed_players if the selection function value is greater than the random number stat
+			if (exp(a*x)-0.9 > stat){
+				seed_players.push_back(player(select_counter, N_lasers));
+				seed_players.back().clone((*itplay));
+				std::cout << i << "  " << exp(a*x) << "  survival time = " << (*itplay).st_ave << " +/- " << (*itplay).st_std << " " << stat << "\n";
+				select_counter++;
+			}
+			//Keep track of the number of players that were qualified, so we can determine how many of the qualified players ultimately were selected
+			if (exp(a*x)-0.9 > 0){
+				fit_counter++;
+			}
+			i++;
 		}
-		//Keep track of the number of players that were qualified, so we can determine how many of the qualified players ultimately were selected
-		if (exp(a*x)-0.9 > 0){
-			fit_counter++;
-		}
-		i++;
 	}
 	std::cout << fit_counter << "   fit players\n";
 	std::cout << select_counter << "   fit players selected for next generation.\n";

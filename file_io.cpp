@@ -38,7 +38,7 @@ void write_temp_data(generation *gen, std::vector<player> players){
 void write_gen(generation *gen){
 	/// Write generation information to 'g_data' file
 	std::ofstream gdata;
-	gdata.open("data/g_data", std::ofstream::out | std::ofstream::app);
+	gdata.open("data/g_data.txt", std::ofstream::out | std::ofstream::app);
 
 	gdata << "Name:" << gen->name << "\nParent_gen: " << gen->parent_gen << "\nN_lasers: " << gen->N_lasers << "\nN_death_cycles: " << gen->N_death_cycles << "\nlaser_x_vels: ";
 
@@ -53,7 +53,7 @@ void write_gen(generation *gen){
 
 void write_players(generation *gen, std::vector<player> players){
 	std::ofstream pdata;
-	pdata.open("data/p_data", std::ofstream::out | std::ofstream::app);
+	pdata.open("data/p_data.txt", std::ofstream::out | std::ofstream::app);
 
 	for (int i = 0; i < players.size(); i++){
 		pdata << "Generation: " << gen->name << "\nSurvival_times: ";

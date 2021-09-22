@@ -13,7 +13,7 @@ gSettings::gSettings(int i, int sL, const std::string& fname, const std::string&
 
 generation::generation(std::string nombre, std::string parent, int nl){
 	n_LOS = nl;
-	mmag = 0.05;
+	mmag = 1.25;
 	mutate_style = "abs";
 	N_lasers = 0;
 	N_death_cycles = 0;
@@ -25,6 +25,7 @@ generation::generation(std::string nombre, std::string parent, int nl){
 void generation::birth(std::string nombre, std::string parent){
 	N_lasers = 0;
 	N_death_cycles = 0;
+	laser_x_vels.clear();
 	name = nombre;
 	parent_gen = parent;
 	std::cout << "New generation " << name << "\n";

@@ -7,6 +7,9 @@
 laser::laser(double vel, std::vector<double> &laser_x_vels){
 	left=0.0, right=56.0, top=1.0, bottom=5.0;
 	posy = rand() % 475 + 40;
+	//posy = rand() % 60 + 259; // centered lasers
+
+
 	//posy = rand() % 475 + 75;
 	posx = 800.1;
 	velx = vel;
@@ -51,7 +54,7 @@ void check_reached_end(std::vector<laser> &lasers, int &lasers_ever, std::vector
 		lasers[todelete[i]] = lasers.back(); //Move expired laser to the back of the array?
 		lasers.pop_back();	//Delete the laser that is in the back of the array
 
-		lasers.push_back(laser(-norm_dist(4.5, 2.), laser_x_vels)); //Add new laser to the back of the array, sampling the velocity distribution
+		lasers.push_back(laser(-norm_dist(4.6, 2.25), laser_x_vels)); //Add new laser to the back of the array, sampling the velocity distribution
 		lasers_ever++;
 	}
 }

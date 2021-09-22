@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	std::vector<std::string> vline;
 	std::ifstream inp(directive); // Not sure why this doesn't throw an error. Sometimes the file "directive" doesn't even exist. Maybe it's because we don't try reading it in that case
 
-	gSettings *gs = new gSettings(50,30,"assets/player.png","assets/spear.png",0.5); // Game settings object
+	gSettings *gs = new gSettings(50,100,"assets/player.png","assets/spear.png",0.5); // Game settings object
 	generation *gen = new generation(gen_random(12), "None", std::stoi(argv[1])); // New generation object. Parent generation name is the second parameter.
 	gen->reload(directive); // Reload a previous generation from file if the user requests it.
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	std::vector<laser> lasers; //stack allocation
 	for (int i = 0; i < gen->n_LOS; i++){
 		//lasers.push_back(new laser(-norm_dist(4.5, 2.))); //heap allocation
-		lasers.push_back(laser(-norm_dist(4.5, 2.), gen->laser_x_vels)); //stack allocation
+		lasers.push_back(laser(-norm_dist(4.6, 2.25), gen->laser_x_vels)); //stack allocation
 		gen->N_lasers++;
 	}
 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 			for (std::vector<player>::iterator iter = players.begin(); iter != players.end(); ++iter) (*iter).draw(window);
 		}
 
-		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+		pressed = show_mouse_coords(pressed, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, players, gen);
 
 		//std::cout << "N_lasers = " << gen->N_lasers << "\n";
 		check_reached_end(lasers, gen->N_lasers, gen->laser_x_vels); //If any lasers have reached the end of the screen, delete them

@@ -6,6 +6,9 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "fcns.h"
+#include "file_io.h"
+#include "player.h"
+#include "gSettings.h"
 #include "unistd.h"
 using namespace std;
 
@@ -22,18 +25,20 @@ double normalRandom() {
 double norm_dist(double mean, double std_dev) {
 	double x = normalRandom()*std_dev+mean;
 
-	if (x < 0.6) x = mean;
+	if (x < 0.9) x = mean;
 
 	return x;
 }
 
-bool show_mouse_coords(bool pressed, int mousex, int mousey){
+bool show_mouse_coords(bool pressed, int mousex, int mousey, std::vector<player> &players, generation *gen){
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) pressed = true;
 
 	if (!(sf::Mouse::isButtonPressed(sf::Mouse::Left)) && (pressed)) {
 		std::cout << mousex << ", " << mousey << "\n";
 		pressed = false;
+
+		write_temp_data(gen, players);
 	}
 
 	return pressed;
