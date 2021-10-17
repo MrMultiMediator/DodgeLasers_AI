@@ -16,7 +16,7 @@ Hardcoded Parameters:
 
 Compilation/Running Instructions:
 
-1.) Run "./compile.sh" to compile in Linux. This has only been tested in Ubuntu Linux using Windows Subsystem for Linux in Windows 10.
+1.) Run "Make" to compile in Linux. This has only been tested in Ubuntu Linux using Windows Subsystem for Linux in Windows 10.
 
 2.) Run "./DL N None" to begin training with a new lineage. N = Number of lasers.
 
