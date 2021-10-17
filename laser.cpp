@@ -6,7 +6,8 @@
 
 laser::laser(double vel, std::vector<double> &laser_x_vels){
 	left=0.0, right=56.0, top=1.0, bottom=5.0;
-	posy = rand() % 475 + 40;
+	posy = rand() % 475 + 40; // Lasers everywhere
+	//posy = rand() % 150 + 214; // Diffusely centered
 	//posy = rand() % 60 + 259; // centered lasers
 
 
