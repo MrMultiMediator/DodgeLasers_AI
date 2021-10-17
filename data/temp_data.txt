@@ -1,0 +1,155 @@
+Name: t11rdtsrrokr
+Parent_gen: t24e04cw8woa
+N_lasers: 105
+N_death_cycles: 0
+laser_x_vels: -3.49052 -5.46462 -6.14944 -6.21465 -4.83528 -4.6 -4.84758 -9.8457 -4.70952 -2.55631 -3.83152 -7.2147 -2.98968 -2.27063 -4.6 -2.27436 -2.46135 -3.29646 -3.96362 -7.75408 -3.25496 -8.65763 -4.65389 -3.64584 -5.25345 -2.21143 -5.01456 -4.6 -1.21849 -3.63415 -2.69481 -2.85141 -8.4998 -5.69618 -5.60394 -5.35741 -7.07606 -6.30071 -5.98117 -5.37368 -4.87394 -7.39329 -6.66419 -1.95718 -2.26938 -2.78008 -6.79421 -4.07781 -7.72515 -5.48227 -4.6 -6.43052 -5.0695 -4.0695 -1.63207 -6.01577 -5.58541 -5.57486 -2.09318 -9.75224 -1.29581 -1.14101 -1.70371 -5.81956 -4.39699 -3.99457 -4.6 -4.9436 -7.31248 -6.06492 -2.72112 -4.59274 -7.00992 -4.74182 -4.32285 -3.6617 -3.19677 -3.06559 -6.52372 -2.77174 -5.00966 -6.96023 -4.58712 -4.90287 -4.34472 -6.8084 -5.95887 -6.52799 -1.10928 -8.18357 -7.57958 -4.6 -4.00492 -3.04086 -3.18483 -2.13654 -1.84858 -1.3066 -3.1137 -4.79664 -5.52669 -4.99931 -3.69317 -4.24492 -1.48389 
+Survival_times: 
+Weights: 0.01 0 0.0004696 0 -0.000817629 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000113513 0 -0.0008898 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000440616 0 -0.000788901 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.00067523 0 -0.000177392 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000168897 0 -0.000505383 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000652102 0 -0.000699936 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000271923 0.000861491 -0.000465144 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000165131 0 -0.000931219 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000227864 0 -0.000472505 0 0.000617453 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000305262 0 -0.000620039 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000568015 0 -0.000816389 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000439478 0 -0.00067798 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000645772 0 -0.000508827 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000986039 0 -0.000219539 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000408915 0 -0.000974363 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000199643 0 -0.00077241 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000298899 0 -0.000441187 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.00049508 0 -0.000363554 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 8.82933e-05 0 -0.000373249 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000600333 0 -0.000323087 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000742116 0 -0.0013061 0 9.88998e-05 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000296568 0 -0.000828594 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000245128 0 -0.000879124 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 -0.000329518 0 -0.000846896 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000922622 0 -0.00072005 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000256771 0 -0.00101548 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000717808 0.000416961 -0.000214658 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.0001356 0 -0.000567261 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000490157 0 -0.000610276 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000422705 0.00133445 -0.000450974 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.00023026 0 -0.00103354 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000125494 0.000247877 -0.000699339 0 0.000579335 
+Bias: 0
+Survival_times: 
+Weights: 0.01 -0.000694927 0.000217853 0 -0.000804133 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000419993 0 -0.000893379 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000572921 0 -0.000781356 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000906576 0 -0.000514794 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.00144735 0 -0.000215891 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 -0.000153711 0.000347996 0 -0.000860894 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000270229 0 -0.000610509 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000205603 0 -0.00037448 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000457561 0.000151007 -0.000208919 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000118499 0 0.000898903 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000331393 0 -0.00020527 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 -0.000909227 0.00101421 0 -0.000563295 0 0.000140937 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000400335 0 -0.000264731 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000142602 0.000900066 -0.000348305 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000428288 0 -0.00119549 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000123558 0 -0.000773417 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000667946 0 -0.000479667 0 0 
+Bias: 0
+Survival_times: 
+Weights: 0.01 0 0.000387556 0 -0.000286763 0 0 
+Bias: 0
